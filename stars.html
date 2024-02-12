@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Night Sky</title>
+    <link rel="stylesheet" type="text/css" href="css/stars.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="data/mydsodb.csv"></script>
+    <script src="data/myskydb.csv"></script>
+
+    <script src="js/papaparse.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        #buttons {
+            float: left;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <canvas id="myCanvas" width="875" height="875" style="border:1px solid #000000;">
+        </canvas>
+
+        <div id="buttons">
+            <textarea id="mouseloc" rows="5"></textarea><br>
+            <p><center><u><i>Time</i></u></center></p>
+            <button id="runbackward">Run Backwards</button><br>
+            <button id="stepbackward">Step Backward</button><br>
+            <button id="stepforward">Step Forward</button><br>
+            <button id="runforward">Run Forwards</button><br>
+
+            <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
+            <div>
+                <textarea id="starmag" style="text-align: center"></textarea><br>
+                <button id="decreasestarmag" style="float: left;">-</button>
+                <button id="increasestarmag" style="float: right;">+</button><br>
+            </div>
+
+            <p><center><u><i>Display Objects</i></u></center></p>
+
+            <button id="showStars">Show Stars</button><br><textarea id="starcount" style="text-align: center"></textarea><br>
+            <br>
+            <button id="showDSO">Show Messier</button><br><textarea id="dsocount" style="text-align: center"></textarea><br>
+            <br>
+            <br>
+            <button id="reset">Reset</button><br>
+
+        </div>
+    </div>
+    <script type="text/javascript" src="js/stars.js"></script>
+</body>
+</html>
