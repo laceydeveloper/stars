@@ -217,7 +217,7 @@ function checkForDSO(x,y) {
 }
 
 function calcCoordinates(ra, dec, distance) {
-    var theta = toRadians(ra);
+    var theta = toRadians(180-ra);
     var phi = toRadians(90-dec);
     
     var x = horizonradius*Math.sin(phi)*Math.cos(theta);
@@ -229,12 +229,12 @@ function calcCoordinates(ra, dec, distance) {
     y1 = -y;
     z1 = x*sindec + z * cosdec;
 
-    var dir = 90;
+    var dir = 0;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
-    //x1 = x1*cosdir + y1 * sindir;
-    //y1 = -x1*sindir - y1 * cosdir;
+    x1 = x1*cosdir + y1 * sindir;
+    y1 = -x1*sindir - y1 * cosdir;
     z1 = z1
 
     return {'x': x1, 'y': y1, 'z': z1};
@@ -248,7 +248,7 @@ function plotObject(ra,dec,spectrum,size, distance) {
         context.fillStyle = spectrum;
         coords = calcCoordinates(ra,dec, distance);
         // id, ra, dec, x, y, z
-        if (coords.x > 0) {
+        if ((coords.x > 0) && (coords.z < 0)){
             context.arc(coords.y+centerX, coords.z+centerY, size, 0, 2 * Math.PI, false);
 //            context.arc(coords.y+centerX, coords.z+(2*centerY), size, 0, 2 * Math.PI, false);
  //           context.arc(coords.y-horizonradius, coords.z-horizonradius, size, 0, 2 * Math.PI, false);
@@ -393,14 +393,14 @@ function runbackward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
         printhisto();
         binned = true;
     }
-    thisinterval = setInterval(update_backwardsphere, 700);
+    thisinterval = setInterval(update_backwardsphere, 100);
 
 }
 
@@ -411,7 +411,7 @@ function stepbackward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -452,7 +452,7 @@ function runforward() {
         printhisto();
         binned = true;
     }
-    thisinterval = setInterval(update_forwardsphere, 700);
+    thisinterval = setInterval(update_forwardsphere, 100);
 }
 
 function update_forwardsphere() {
@@ -476,7 +476,7 @@ function update_backwardsphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
