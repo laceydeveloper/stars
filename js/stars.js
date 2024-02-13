@@ -229,8 +229,11 @@ function calcCoordinates(ra, dec, distance) {
     x1 = x*cosdec - z * sindec;
     y1 = y;
     z1 = x*sindec + z * cosdec;
+ //   x1=x;
+ //   y1=y;
+ //   z1=z;
 
-    var dir = 0;
+    var dir = 180;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
@@ -250,6 +253,7 @@ function plotObject(ra,dec,spectrum,size, distance) {
         coords = calcCoordinates(ra,dec, distance);
         // id, ra, dec, x, y, z
         if ((coords.x > 0) && (coords.z < 0)){
+ //           if (true) {
             context.arc(coords.y+centerX, coords.z+centerY, size, 0, 2 * Math.PI, false);
 //            context.arc(coords.y+centerX, coords.z+(2*centerY), size, 0, 2 * Math.PI, false);
  //           context.arc(coords.y-horizonradius, coords.z-horizonradius, size, 0, 2 * Math.PI, false);
