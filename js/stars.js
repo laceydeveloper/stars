@@ -233,7 +233,7 @@ function calcCoordinates(ra, dec, distance) {
  //   y1=y;
  //   z1=z;
 
-    var dir = 180;
+    var dir = 0;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
