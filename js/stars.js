@@ -226,7 +226,7 @@ function calcCoordinates(ra, dec, distance) {
 
     // yaxis-rotation
     x1 = x*cosdec - z * sindec;
-    y1 = -y;
+    y1 = y;
     z1 = x*sindec + z * cosdec;
 
     var dir = 0;
@@ -393,7 +393,7 @@ function runbackward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -411,7 +411,7 @@ function stepbackward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -428,7 +428,7 @@ function stepforward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -445,7 +445,7 @@ function runforward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -461,7 +461,7 @@ function update_forwardsphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -476,7 +476,7 @@ function update_backwardsphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -492,7 +492,7 @@ function update_sphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change += speed;
+    ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
