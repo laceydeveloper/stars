@@ -129,7 +129,8 @@ var centerY = canvas.height / 2;
 //var centerY = 0;
 var starradius = 4;
 var gridradius = 1;
-var horizonradius = -(canvas.width / 2)*1.49;
+//var horizonradius = -(canvas.width / 2)*1.49;
+var horizonradius = -(canvas.width / 2)*1.0;
 //var horizonradius = -(canvas.width / 2);
 var ra_change = 0;
 
