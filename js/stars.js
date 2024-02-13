@@ -234,7 +234,7 @@ function calcCoordinates(ra, dec, distance) {
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
     x1 = x1*cosdir + y1 * sindir;
-    y1 = -x1*sindir - y1 * cosdir;
+    y1 = -x1*sindir + y1 * cosdir;
     z1 = z1
 
     return {'x': x1, 'y': y1, 'z': z1};
@@ -428,7 +428,7 @@ function stepforward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -445,7 +445,7 @@ function runforward() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -461,7 +461,7 @@ function update_forwardsphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
@@ -492,7 +492,7 @@ function update_sphere() {
 //        clearInterval(thisinterval);
 //        return;
     }
-    ra_change -= speed;
+    ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
     rotateSpace(ra_change);
     if (!binned) {
