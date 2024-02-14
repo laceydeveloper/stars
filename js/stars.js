@@ -227,7 +227,7 @@ function calcCoordinates(ra, dec, distance) {
     y1 = y;
     z1 = x*sindec + z * cosdec;
  
-    var dir = 0;
+    var dir = 270;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
