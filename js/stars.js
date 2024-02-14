@@ -17,7 +17,7 @@ var maxstarmag = 3.7;
 
 var radian = 180.0 / Math.PI;
 var lat = toDecimalDec(39,51,8.7);  // latitude
-lat = 90.0 - lat;
+lat = -(90.0 - lat);
 //lat = 90.0 - lat;
 //lat = 0.0;
 //lat = 50.0;
@@ -125,13 +125,10 @@ var context = canvas.getContext("2d");
 
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
-//centerY = canvas.height;
-//var centerY = 0;
+
 var starradius = 4;
 var gridradius = 1;
-//var horizonradius = -(canvas.width / 2)*1.49;
-var horizonradius = -(canvas.width / 2)*1.0;
-//var horizonradius = -(canvas.width / 2);
+var horizonradius = -(canvas.width / 2)*1.49;
 var ra_change = 0;
 
 canvas.addEventListener("mousedown", doMouseDown, false);
@@ -218,7 +215,7 @@ function checkForDSO(x,y) {
 }
 
 function calcCoordinates(ra, dec, distance) {
-    var theta = toRadians(180-ra);
+    var theta = toRadians(ra);
     var phi = toRadians(90-dec);
     
     var x = horizonradius*Math.sin(phi)*Math.cos(theta);
@@ -229,19 +226,16 @@ function calcCoordinates(ra, dec, distance) {
     x1 = x*cosdec - z * sindec;
     y1 = y;
     z1 = x*sindec + z * cosdec;
- //   x1=x;
- //   y1=y;
- //   z1=z;
-
-    var dir = 180;
+ 
+    var dir = 0;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
-    x1 = x1*cosdir + y1 * sindir;
-    y1 = -x1*sindir + y1 * cosdir;
-    z1 = z1
+    x_final = x1*cosdir + y1 * sindir;
+    y_final = -x1*sindir + y1 * cosdir;
+    z_final = z1;
 
-    return {'x': x1, 'y': y1, 'z': z1};
+    return {'x': x_final, 'y': y_final, 'z': z_final};
 }
 
 function plotObject(ra,dec,spectrum,size, distance) {
@@ -252,11 +246,8 @@ function plotObject(ra,dec,spectrum,size, distance) {
         context.fillStyle = spectrum;
         coords = calcCoordinates(ra,dec, distance);
         // id, ra, dec, x, y, z
-        if ((coords.x > 0) && (coords.z < 0)){
- //           if (true) {
+        if ((coords.x < 0) && (coords.z < 0)){
             context.arc(coords.y+centerX, coords.z+centerY, size, 0, 2 * Math.PI, false);
-//            context.arc(coords.y+centerX, coords.z+(2*centerY), size, 0, 2 * Math.PI, false);
- //           context.arc(coords.y-horizonradius, coords.z-horizonradius, size, 0, 2 * Math.PI, false);
             context.fill();		
             inview =  true;		
         }
