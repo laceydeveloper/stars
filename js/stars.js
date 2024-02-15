@@ -6,6 +6,10 @@ var numobjs = objs.length;
 var numdsos = dsos.length;
 
 var thisinterval = null;
+const init_dir = 0;
+var dir = init_dir;
+const init_speed = 100;
+var rotation_speed = init_speed;
 
 var histobins = Array(120).fill(0);
 var binned = false;
@@ -227,7 +231,6 @@ function calcCoordinates(ra, dec, distance) {
     y1 = y;
     z1 = x*sindec + z * cosdec;
  
-    var dir = 0;
     var cosdir = Math.round(Math.cos(toRadians(dir)));
     var sindir = Math.round(Math.sin(toRadians(dir)));
     // zaxis-rotation
@@ -323,9 +326,14 @@ function rotateSpace() {
             var mag = dsos[i].mag;
             var cat = dsos[i].cat1;
  
+            starradius = findstarsize(mag);
             if (cat == "M") {
-                starradius = findstarsize(mag);
-                if (plotObject(15*dsos[i].ra, dsos[i].dec, 'red', 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
+                thiscolor = "red";
+ //           }
+ //           else {
+ //               thiscolor = "lightblue";
+ //           }
+                if (plotObject(15*dsos[i].ra, dsos[i].dec, thiscolor, 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
                     x2dso[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x };
                     j++;
     
@@ -340,7 +348,8 @@ function rotateSpace() {
                 }
             }
         }
-    }   
+    }
+     
     thisvalmag = Math.round((maxstarmag + Number.EPSILON) * 100) / 100;
     document.getElementById('starmag').innerHTML = thisvalmag;
     document.getElementById('starcount').innerHTML = num_plotted;
@@ -369,6 +378,9 @@ function resetConfig() {
     displayDSO = false;
     displayStars = true;
     maxstarmag = 3.7;
+    ra_change = 0;
+    dir = init_dir;
+    rotation_speed = init_speed;
     rotateSpace();
 }
 
@@ -396,7 +408,7 @@ function runbackward() {
         printhisto();
         binned = true;
     }
-    thisinterval = setInterval(update_backwardsphere, 100);
+    thisinterval = setInterval(update_backwardsphere, rotation_speed);
 
 }
 
@@ -448,7 +460,7 @@ function runforward() {
         printhisto();
         binned = true;
     }
-    thisinterval = setInterval(update_forwardsphere, 100);
+    thisinterval = setInterval(update_forwardsphere, rotation_speed);
 }
 
 function update_forwardsphere() {
