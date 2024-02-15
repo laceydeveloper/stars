@@ -14,9 +14,8 @@ var rotation_speed = init_speed;
 var histobins = Array(120).fill(0);
 var binned = false;
 
-var show_large = true;  // show large number of DSO's
-
 var displayDSO = false;
+var displayMessier = false;
 var displayStars = true;
 
 var maxstarmag = 3.7;
@@ -146,12 +145,23 @@ function doMouseDown(e) {
     var thisstar = checkForStar(x, y);
     if (thisstar != -1) {
         printstar(thisstar);
+        return;
     }
-    //else {
+
+    if (displayMessier) {
+        var thismessier = checkForMessier(x, y);
+        if (thismessier != -1) {
+            printdso(thismessier);
+            return;
+        }
+    }
+ 
+    if (displayDSO) {
         var thisdso = checkForDSO(x, y);
         if (thisdso != -1) {
             printdso(thisdso);
-    //    }
+            return;
+        }
     }
 }
 
@@ -213,7 +223,24 @@ function checkForDSO(x,y) {
         var thisy = x2dso[i].y;
         if (Math.abs(Math.abs(thisx) - x) <= xthreshold) {
             if (Math.abs(Math.abs(thisy) - y) <= ythreshold) {
-                return i;
+                if (dsos[x2dso[i].index].cat1 != "M") {
+                    return i;
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+function checkForMessier(x,y) {
+    for (i=0; i < x2dso.length;i++) {
+        var thisx = x2dso[i].x;
+        var thisy = x2dso[i].y;
+        if (Math.abs(Math.abs(thisx) - x) <= xthreshold) {
+            if (Math.abs(Math.abs(thisy) - y) <= ythreshold) {
+                if (dsos[x2dso[i].index].cat1 == "M") {
+                    return i;
+                }
             }
         }
     }
@@ -319,29 +346,38 @@ function rotateSpace() {
     }
  //   console.log("num_plotted = " + num_plotted);
 
-    var dso_plotted = 0;
-    var maxdsomag = 0.0;
+ var dso_plotted = 0;
+ var messier_plotted = 0;
+ var maxdsomag = 0.0;
     var mindsomag = 111111.0;
 
-    if (displayDSO) {
+    if ((displayDSO) || (displayMessier)) {
         j = 0;
         for (i = 0; i < dsos.length; i++) {
             var mag = dsos[i].mag;
             var cat = dsos[i].cat1;
- 
+            var plotit = false;
             starradius = findstarsize(mag);
-            if (cat == "M") {
+            if ((cat == "M") && (displayMessier)) {
                 thiscolor = "red";
-            } // large
-            else {  // large
-                thiscolor = "lightblue";   // large
-            }  // large
-                if ((thiscolor == "red") || (show_large)) {
+                plotit = true;
+            } 
+            else if (displayDSO) {  
+                thiscolor = "lightblue";   
+                plotit = true;
+            }
+            if (plotit) {
                 if (plotObject(15*dsos[i].ra, dsos[i].dec, thiscolor, 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
                     x2dso[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x };
                     j++;
+                    if ((displayMessier) && (thiscolor == "red")) {
+                        messier_plotted++;
+                    }
+
+                    if ((displayDSO) && (thiscolor == "lightblue")) {
+                        dso_plotted++;
+                    }
     
-                    dso_plotted++;
                     fmag = parseFloat(mag);
                     if (fmag < mindsomag) {
                         mindsomag = fmag;
@@ -351,14 +387,14 @@ function rotateSpace() {
                     }
                 }
             }
-            }
         }
- //   }    // large
+    }
      
     thisvalmag = Math.round((maxstarmag + Number.EPSILON) * 100) / 100;
     document.getElementById('starmag').innerHTML = thisvalmag;
     document.getElementById('starcount').innerHTML = num_plotted;
     document.getElementById('dsocount').innerHTML = dso_plotted;
+    document.getElementById('messiercount').innerHTML = messier_plotted;
 
 }
 
@@ -369,24 +405,32 @@ document.getElementById('runforward').addEventListener("mousedown", runforward, 
 document.getElementById('increasestarmag').addEventListener("mousedown", increase_star_mag, false);
 document.getElementById('decreasestarmag').addEventListener("mousedown", decrease_star_mag, false);
 document.getElementById('showStars').addEventListener("mousedown", showStars, false);
+document.getElementById('showMessier').addEventListener("mousedown", showMessier, false);
 document.getElementById('showDSO').addEventListener("mousedown", showDSO, false);
 document.getElementById('reset').addEventListener("mousedown", resetConfig, false);
 
 document.getElementById("mouseloc").disabled = true;
 document.getElementById("starcount").disabled = true;
 document.getElementById("dsocount").disabled = true;
+document.getElementById("messiercount").disabled = true;
 document.getElementById("starmag").disabled = true;
 
 
 
 function resetConfig() {
     displayDSO = false;
+    displayMessier = false;
     displayStars = true;
     maxstarmag = 3.7;
     ra_change = 0;
     dir = init_dir;
     rotation_speed = init_speed;
     rotateSpace();
+}
+
+function showMessier() {
+    displayMessier = !displayMessier; 
+    rotateSpace();      
 }
 
 function showDSO() {
