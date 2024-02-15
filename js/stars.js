@@ -14,6 +14,8 @@ var rotation_speed = init_speed;
 var histobins = Array(120).fill(0);
 var binned = false;
 
+var show_large = true;  // show large number of DSO's
+
 var displayDSO = false;
 var displayStars = true;
 
@@ -249,8 +251,9 @@ function plotObject(ra,dec,spectrum,size, distance) {
         context.fillStyle = spectrum;
         coords = calcCoordinates(ra,dec, distance);
         // id, ra, dec, x, y, z
-        if ((coords.x < 0) && (coords.z < 0)){
-            context.arc(coords.y+centerX, coords.z+centerY, size, 0, 2 * Math.PI, false);
+//        if ((coords.x < 0) && (coords.z < 0)){
+            if (coords.x < 0) {
+                context.arc(coords.y+centerX, coords.z+centerY, size, 0, 2 * Math.PI, false);
             context.fill();		
             inview =  true;		
         }
@@ -329,10 +332,11 @@ function rotateSpace() {
             starradius = findstarsize(mag);
             if (cat == "M") {
                 thiscolor = "red";
- //           }
- //           else {
- //               thiscolor = "lightblue";
- //           }
+            } // large
+            else {  // large
+                thiscolor = "lightblue";   // large
+            }  // large
+                if ((thiscolor == "red") || (show_large)) {
                 if (plotObject(15*dsos[i].ra, dsos[i].dec, thiscolor, 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
                     x2dso[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x };
                     j++;
@@ -347,8 +351,9 @@ function rotateSpace() {
                     }
                 }
             }
+            }
         }
-    }
+ //   }    // large
      
     thisvalmag = Math.round((maxstarmag + Number.EPSILON) * 100) / 100;
     document.getElementById('starmag').innerHTML = thisvalmag;
