@@ -165,12 +165,47 @@ function doMouseDown(e) {
     }
 }
 
+function printDSOType(dsotype) {
+    var thistype = dsotype;
+    switch (dsotype) {
+        case "Gxy":
+            thistype = "Galaxy";
+            break; 
+        case "GxyCld":
+            thistype = "Bright Nebula";
+            break;
+        case "Neb":
+            thistype = "Nebula";
+            break;
+        case "OC":
+            thistype = "Open Cluster";
+            break;
+       case "OC+Neb":
+            thistype = "Open Cluster + Nebula";
+            break;
+        case "GC":
+            thistype = "Globular Cluster";
+            break;
+        case "PN":
+            thistype = "Planetary Nebula";
+            break;
+        case "Ast":
+            thistype = "Planetary Nebula";
+            break;
+        default:
+    }
+    return thistype;
+}
+
+const parsec = 3.26; // lightyears in a parsec
 function printstar(i) {
     thisstar = objs[x2stars[i].index];
     alerttext = thisstar.bf + "\n";
-    alerttext += "Apparent Magnitude: " + thisstar.mag+ "\n";
+    if (thisstar.proper != "") alerttext += "Proper Name: " + thisstar.proper + "\n";
+    alerttext += "Apparent Mag: " + thisstar.mag+ "\n";
+    alerttext += "Distance: " + (thisstar.dist*parsec).toFixed(2) + " ly\n";
+    alerttext += "Classification: " + (thisstar.spect).substring(0, 2) + "\n";
 
-    if (thisstar.proper != "") alerttext += thisstar.proper;
  //   if (objs[x2stars[i].index].x > 0) {
     $('#mouseloc').val(alerttext);
  //       alert(alerttext);
@@ -180,8 +215,9 @@ function printstar(i) {
 
 function printdso(i) {
     thisdso = dsos[x2dso[i].index];
-    alerttext = thisdso.cat1 + thisdso.id1 + "\n";
-    if (thisdso.name != "") alerttext += thisdso.name;
+    alerttext = thisdso.cat1 + " " + thisdso.id1 + "\n";
+    if (thisdso.name != "") alerttext += thisdso.name + "\n";
+    alerttext += "DSO Type: " + printDSOType(thisdso.type) + "\n";
  //   alert(dsos[x2dso[i].index].name);
  //   if (dsos[x2dso[i].index].x > 0) {
         $('#mouseloc').val(alerttext);
