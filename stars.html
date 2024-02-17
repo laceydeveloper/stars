@@ -22,7 +22,7 @@
                   range:true,  
                   min: 0,  
                   max: 500,  
-                  values: [ 50, 300 ],  
+                  values: [ 0, 1000 ],  
                   slide: function( event, ui ) {  
  //                    $( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );  
                   }  
@@ -45,6 +45,14 @@
             <button id="stepbackward">Step Backward</button><br>
             <button id="stepforward">Step Forward</button><br>
             <button id="runforward">Run Forwards</button><br>
+            <br>
+            <p><center><u><i>Viewing Direction (degrees)</i></u></center></p>
+            <div>
+                <textarea id="curdirection" style="text-align: center"></textarea><br>
+                <button id="lookleft" style="float: left;">Rotate Left</button>
+                <button id="lookright" style="float: right;">Rotate Right</button><br>
+            </div>
+            <br>
 
             <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
             <div>
@@ -54,7 +62,7 @@
             </div>
             <br>
             <div>
-            <fieldset><legend>Range of Visible Distance</legend>
+            <fieldset><legend>Visible Stellar Distance</legend>
                 <div id="distance-slider"></div> 
             </fieldset> 
             <br>

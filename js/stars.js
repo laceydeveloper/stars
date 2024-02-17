@@ -82,6 +82,20 @@ function decrease_star_mag() {
     rotateSpace();
 }
 
+function lookleft() {
+    dir += 5;
+    if (dir >= 360) {
+        dir = 0;
+    }
+}
+
+function lookright() {
+    dir -= 5;
+    if (dir < 0) {
+        dir = 355;
+    }
+}
+
 function findstarsize(mag) {
     var thissize = 1;
     if (mag <= 4) thissize = 1;
@@ -430,8 +444,10 @@ function calcCoordinates(ra, dec, distance) {
     y1 = y;
     z1 = x*sindec + z * cosdec;
  
-    var cosdir = Math.round(Math.cos(toRadians(dir)));
-    var sindir = Math.round(Math.sin(toRadians(dir)));
+//   var cosdir = Math.round(Math.cos(toRadians(dir)));
+//    var sindir = Math.round(Math.sin(toRadians(dir)));
+    var cosdir = Math.cos(toRadians(dir));
+    var sindir = Math.sin(toRadians(dir));
     // zaxis-rotation
     x_final = x1*cosdir + y1 * sindir;
     y_final = -x1*sindir + y1 * cosdir;
@@ -566,6 +582,13 @@ function rotateSpace() {
     }
      
     thisvalmag = Math.round((maxstarmag + Number.EPSILON) * 100) / 100;
+
+    var thisdir = 360 - dir;
+    if (thisdir == 360) {
+        thisdir = 0;
+    }
+
+    document.getElementById('curdirection').innerHTML = thisdir;
     document.getElementById('starmag').innerHTML = thisvalmag;
     document.getElementById('starcount').innerHTML = num_plotted;
     document.getElementById('dsocount').innerHTML = dso_plotted;
@@ -577,6 +600,8 @@ document.getElementById('runbackward').addEventListener("mousedown", runbackward
 document.getElementById('stepbackward').addEventListener("mousedown", stepbackward, false);
 document.getElementById('stepforward').addEventListener("mousedown", stepforward, false);
 document.getElementById('runforward').addEventListener("mousedown", runforward, false);
+document.getElementById('lookleft').addEventListener("mousedown", lookleft, false);
+document.getElementById('lookright').addEventListener("mousedown", lookright, false);
 document.getElementById('increasestarmag').addEventListener("mousedown", increase_star_mag, false);
 document.getElementById('decreasestarmag').addEventListener("mousedown", decrease_star_mag, false);
 document.getElementById('showStars').addEventListener("mousedown", showStars, false);
