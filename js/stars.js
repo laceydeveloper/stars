@@ -139,6 +139,49 @@ var ra_change = 0;
 canvas.addEventListener("mousedown", doMouseDown, false);
 canvas.addEventListener("mousemove", doMouseMove, false);
 
+//refresh screen on stellar class toggle
+$('#O').change(function() {
+    rotateSpace();    
+});
+$('#B').change(function() {
+    rotateSpace();    
+});
+$('#A').change(function() {
+    rotateSpace();    
+});
+$('#F').change(function() {
+    rotateSpace();    
+});
+$('#G').change(function() {
+    rotateSpace();    
+});
+$('#K').change(function() {
+    rotateSpace();    
+});
+$('#M').change(function() {
+    rotateSpace();    
+});
+
+// refrash screen on DSO toggle
+$('#gal').change(function() {
+    rotateSpace();    
+});
+$('#neb').change(function() {
+    rotateSpace();    
+});
+$('#pn').change(function() {
+    rotateSpace();    
+});
+$('#oc').change(function() {
+    rotateSpace();    
+});
+$('#gc').change(function() {
+    rotateSpace();    
+});
+$('#other_dso').change(function() {
+    rotateSpace();    
+});
+
 function doMouseDown(e) {
     x = e.clientX - rect.left;
     y = e.clientY - rect.top;
@@ -190,7 +233,7 @@ function printDSOType(dsotype) {
             thistype = "Planetary Nebula";
             break;
         case "Ast":
-            thistype = "Planetary Nebula";
+            thistype = "Other";
             break;
         default:
     }
@@ -283,6 +326,97 @@ function checkForMessier(x,y) {
     return -1;
 }
 
+var dsotype_set = new Set;
+dsotype_set.add("Gxy"); // galaxy
+dsotype_set.add("GxyCld"); // bright nebula
+dsotype_set.add("Neb"); // nebula
+dsotype_set.add("OC"); // open cluster
+dsotype_set.add("OC+Neb"); // open cluster + Nebula
+dsotype_set.add("GC"); // globular cluster
+dsotype_set.add("PN"); // planetary nebula
+dsotype_set.add("Ast"); // planetary nebula
+
+function dsoTypeToCheckboxID(thisdso_type) {
+    id = "not found";
+    switch (thisdso_type) {
+        case "Gxy":
+            id = "gal";
+            break;
+        case "GxyCld":
+            id = "neb";
+            break;
+        case "Neb":
+            id = "neb";
+            break;
+        case "OC":
+            id = "oc";
+            break;
+        case "OC+Neb":
+            id = "oc";
+            break;                
+        case "GC":
+            id = "gc";
+            break;        
+        case "PN":
+            id = "pn";
+            break;
+        case "Ast":
+            id = "pn";
+        default:     
+            id = "other_dso";      
+    }
+    return id;
+}
+
+var starclass_set = new Set;
+starclass_set.add("O");
+starclass_set.add("B");
+starclass_set.add("A");
+starclass_set.add("F");
+starclass_set.add("G");
+starclass_set.add("K");
+starclass_set.add("M");
+
+
+function checkStarClassDisplayable(thisclass) {
+    var displayable = false;
+    classes = "OBAFGKM"
+    if (classes.includes(thisclass) && (thisclass != "")) {
+ //       console.log(thisclass+ " class star");
+        ischecked = document.getElementById(thisclass).checked;
+        if (ischecked) {
+            displayable = true;
+        }
+    }   
+    return displayable;
+}
+
+function checkDSOTypeDisplayable(thisdso_type) {
+    var displayable = false;
+    if (dsotype_set.has(thisdso_type)) {
+ //   if (classes.includes(thisclass) && (thisdso_type != "")) {
+ //       console.log(thisclass+ " class star");
+        console.log(thisdso_type + " DSO Type");
+        thisdso_type_id = dsoTypeToCheckboxID(thisdso_type);
+ //       if (thisdso_type_id != "not_found") {
+            ischecked = document.getElementById(thisdso_type_id).checked;
+            if (ischecked) {
+                displayable = true;
+            }
+ //       }
+    }   
+    return displayable;
+}
+
+function checkDistanceDisplayable(thisdistance) {
+//  id="distance-slider"
+
+    var displayable = false;
+
+    
+    return displayable;
+}
+
 function calcCoordinates(ra, dec, distance) {
     var theta = toRadians(ra);
     var phi = toRadians(90-dec);
@@ -306,7 +440,7 @@ function calcCoordinates(ra, dec, distance) {
     return {'x': x_final, 'y': y_final, 'z': z_final};
 }
 
-function plotObject(ra,dec,spectrum,size, distance) {
+function plotObject(ra, dec, spectrum, size, distance) {
     //	dec = 90 - dec;
         var inview = false;
         ra = ra - ra_change;
@@ -363,21 +497,23 @@ function rotateSpace() {
 
     if (displayStars) {
         for (i = 0; i < numobjs; i++) {
-            var mag = objs[i].mag;
-            binmag(mag);
-            if (mag <= maxstarmag) {
-                thiscolor = 'white';
-                if (objs[i].proper == "Aldebaran") thiscolor = "pink";
-                starradius = findstarsize(mag);
- //               if (plotObject(15*objs[i].ra, objs[i].dec, 'white', starradius, objs[i].dist)) {
-                if (plotObject(15*objs[i].ra, objs[i].dec, thiscolor, starradius, objs[i].dist)) {  // 15* is due to 15 * 24 = 360 degrees
-                    x2stars[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x};
-                    j++; 
-                    num_plotted++;
-                };
+            if (checkStarClassDisplayable(objs[i].spect.substring(0, 1))) { 
+                var mag = objs[i].mag;
+                binmag(mag);
+                if (mag <= maxstarmag) {
+                    thiscolor = 'white';
+                    if (objs[i].proper == "Aldebaran") thiscolor = "pink";
+                    starradius = findstarsize(mag);
+ //                 if (plotObject(15*objs[i].ra, objs[i].dec, 'white', starradius, objs[i].dist)) {
+                    if (plotObject(15*objs[i].ra, objs[i].dec, thiscolor, starradius, objs[i].dist)) {  // 15* is due to 15 * 24 = 360 degrees
+                        x2stars[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x};
+                        j++; 
+                        num_plotted++;
+                    };
                 
-            }
+                }
     
+            }
         }
     }
  //   console.log("num_plotted = " + num_plotted);
@@ -385,41 +521,44 @@ function rotateSpace() {
  var dso_plotted = 0;
  var messier_plotted = 0;
  var maxdsomag = 0.0;
-    var mindsomag = 111111.0;
+ var mindsomag = 111111.0;
 
     if ((displayDSO) || (displayMessier)) {
         j = 0;
         for (i = 0; i < dsos.length; i++) {
             var mag = dsos[i].mag;
             var cat = dsos[i].cat1;
+            var thisdso_type = dsos[i].type;
             var plotit = false;
-            starradius = findstarsize(mag);
-            if ((cat == "M") && (displayMessier)) {
-                thiscolor = "red";
-                plotit = true;
-            } 
-            else if (displayDSO) {  
-                thiscolor = "lightblue";   
-                plotit = true;
-            }
-            if (plotit) {
-                if (plotObject(15*dsos[i].ra, dsos[i].dec, thiscolor, 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
-                    x2dso[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x };
-                    j++;
-                    if ((displayMessier) && (thiscolor == "red")) {
-                        messier_plotted++;
-                    }
+            if (checkDSOTypeDisplayable(thisdso_type)) {
+                starradius = findstarsize(mag);
+                if ((cat == "M") && (displayMessier)) {
+                    thiscolor = "red";
+                    plotit = true;
+                } 
+                else if (displayDSO) {  
+                    thiscolor = "lightblue";   
+                   plotit = true;
+                }
+                if (plotit) {
+                   if (plotObject(15*dsos[i].ra, dsos[i].dec, thiscolor, 2, horizonradius)) {  // 15* is due to 15 * 24 = 360 degrees
+                       x2dso[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x };
+                       j++;
+                      if ((displayMessier) && (thiscolor == "red")) {
+                          messier_plotted++;
+                      }
 
-                    if ((displayDSO) && (thiscolor == "lightblue")) {
-                        dso_plotted++;
-                    }
+                       if ((displayDSO) && (thiscolor == "lightblue")) {
+                           dso_plotted++;
+                       }
     
-                    fmag = parseFloat(mag);
-                    if (fmag < mindsomag) {
-                        mindsomag = fmag;
-                    }
-                    if (fmag > maxdsomag) {
-                        maxdsomag = fmag;
+                       fmag = parseFloat(mag);
+                       if (fmag < mindsomag) {
+                           mindsomag = fmag;
+                       }
+                       if (fmag > maxdsomag) {
+                           maxdsomag = fmag;
+                       }
                     }
                 }
             }

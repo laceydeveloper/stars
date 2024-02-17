@@ -3,7 +3,9 @@
 <head>
     <title>The Night Sky</title>
     <link rel="stylesheet" type="text/css" href="css/stars.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link href="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet">  
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>  
+    <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <script src="data/mydsodb.csv"></script>
     <script src="data/myskydb.csv"></script>
 
@@ -14,6 +16,22 @@
             float: left;
         }
     </style>
+          <script>  
+            $(function() {  
+               $( "#distance-slider" ).slider({  
+                  range:true,  
+                  min: 0,  
+                  max: 500,  
+                  values: [ 50, 300 ],  
+                  slide: function( event, ui ) {  
+ //                    $( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );  
+                  }  
+              });  
+ //           $( "#price" ).val( "$" + $( "#distance-slider" ).slider( "values", 0 ) +  
+ //              " - $" + $( "#distance-slider" ).slider( "values", 1 ) );  
+            });  
+         </script>  
+   
 </head>
 <body>
     <div>
@@ -34,7 +52,13 @@
                 <button id="decreasestarmag" style="float: left;">-</button>
                 <button id="increasestarmag" style="float: right;">+</button><br>
             </div>
-
+            <br>
+            <div>
+            <fieldset><legend>Range of Visible Distance</legend>
+                <div id="distance-slider"></div> 
+            </fieldset> 
+            <br>
+            </div>
             <p><center><u><i>Display Objects</i></u></center></p>
 
             <button id="showStars">Show Stars</button><br><textarea id="starcount" style="text-align: center"></textarea><br>
@@ -45,6 +69,71 @@
             <br>
             <br>
             <button id="reset">Reset</button><br>
+
+        </div>
+        <div id="filters">
+            <fieldset>
+                <legend>Stellar Classification:</legend>
+            
+                <div>
+                    <input type="checkbox" id="O" name="O_class" checked />
+                    <label for="O">O class <code> (<1%)</code></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="B" name="B_class" checked />
+                    <label for="B">B class <code> (1-2%)</code></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="A" name="A_class" checked />
+                    <label for="A">A class <code> (3-5%)</code></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="F" name="F_class" checked />
+                    <label for="F">F class <code> (3-5%)</code></label>
+                </div>             
+                <div>
+                    <input type="checkbox" id="G" name="G_class" checked />
+                    <label for="G">G class (Sun) <code> (7-10%)</code></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="K" name="K_class" checked />
+                    <label for="K">K class <code> (10-15%)</code></label>
+                </div>
+                <div>
+                    <input type="checkbox" id="M" name="M_class" checked />
+                    <label for="M">M class <code> (70-75%)</code></label>
+                </div>    
+              </fieldset>
+              <br>
+              <fieldset>
+                <legend>Deep Sky Objects (DSO):</legend>
+            
+                <div>
+                    <input type="checkbox" id="gal" name="gal" checked />
+                    <label for="gal">Galaxies</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="neb" name="neb" checked />
+                    <label for="neb">Nebulas</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="pn" name="pn" checked />
+                    <label for="pn">Planetary Nebulas</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="oc" name="oc" checked />
+                    <label for="oc">Open Clusters</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="gc" name="gc" checked />
+                    <label for="gc">Globular Clusters</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="other_dso" name="other_dso" checked />
+                    <label for="other_dso">Other DSO</label>
+                </div>
+            </fieldset>
+
 
         </div>
     </div>
