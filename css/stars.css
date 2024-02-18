@@ -1,3 +1,7 @@
 #buttons {
     float: left;
 }
+
+#filters {
+    float: right;
+}
