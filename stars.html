@@ -12,9 +12,46 @@
     <script src="js/papaparse.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <style>
-        #buttons {
-            float: left;
+
+        body {
+            height2: 1300px;
+            width: 1300px;
         }
+
+        #distance-slider {
+            width: 150px;
+        }
+
+        #vr {
+            padding-left: 10px;
+        }
+
+        #visiblerange {
+            padding-bottom: 10px;
+        }
+
+        #vd, #sm, #showme, #modtime, #curdirection, #starmag, #mouseloc, #starcount, #messiercount, #dsocount {
+            width: 200px;
+        }
+
+         #mouseloc {
+            height: 75px;
+        }
+
+        #leftpanel {
+            float: left;
+            width: 210px;
+        }
+
+        #rightpanel {
+            float: left;
+            width: 210px;
+        }
+
+        #myviewport {
+            float: left;
+            width: 875px;
+       }
     </style>
           <script>  
             $(function() {  
@@ -22,127 +59,147 @@
                   range:true,  
                   min: 0,  
                   max: 500,  
-                  values: [ 0, 1000 ],  
+                  values: [ 0, 500 ],  
                   slide: function( event, ui ) {  
- //                    $( "#price" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );  
+                     $( "#visiblerange" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " ly");  
+                     rotateSpace();
                   }  
               });  
- //           $( "#price" ).val( "$" + $( "#distance-slider" ).slider( "values", 0 ) +  
- //              " - $" + $( "#distance-slider" ).slider( "values", 1 ) );  
+            $( "#visiblerange" ).val( $( "#distance-slider" ).slider( "values", 0 ) +  
+               " - " + $( "#distance-slider" ).slider( "values", 1 ) + " ly");  
             });  
          </script>  
    
 </head>
 <body>
     <div>
-        <canvas id="myCanvas" width="875" height="875" style="border:1px solid #000000;">
-        </canvas>
-
-        <div id="buttons">
+        <div id="leftpanel">
             <textarea id="mouseloc" rows="5"></textarea><br>
-            <p><center><u><i>Time</i></u></center></p>
-            <button id="runbackward">Run Backwards</button><br>
-            <button id="stepbackward">Step Backward</button><br>
-            <button id="stepforward">Step Forward</button><br>
-            <button id="runforward">Run Forwards</button><br>
-            <br>
-            <p><center><u><i>Viewing Direction (degrees)</i></u></center></p>
-            <div>
+            <div id="modtime">
+                <p><center><u><i>Time</i></u></center></p>
+                <button id="runbackward">Run Backwards</button><br>
+                <button id="stepbackward">Step Backward</button><br>
+                <button id="stepforward">Step Forward</button><br>
+                <button id="runforward">Run Forwards</button><br>
+                <br>
+            </div>
+            <div id="vd">
+                <p><center><u><i>Viewing Direction (degrees)</i></u></center></p>
                 <textarea id="curdirection" style="text-align: center"></textarea><br>
-                <button id="lookleft" style="float: left;">Rotate Left</button>
-                <button id="lookright" style="float: right;">Rotate Right</button><br>
+                <button id="lookleft" style="float: left;">Look Left</button>
+                <button id="lookright" style="float: right;">Look Right</button><br>
             </div>
             <br>
 
-            <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
-            <div>
+            <div id="sm">
+                <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
                 <textarea id="starmag" style="text-align: center"></textarea><br>
                 <button id="decreasestarmag" style="float: left;">-</button>
                 <button id="increasestarmag" style="float: right;">+</button><br>
             </div>
             <br>
             <div>
-            <fieldset><legend>Visible Stellar Distance</legend>
-                <div id="distance-slider"></div> 
-            </fieldset> 
-            <br>
+                <input type="checkbox" id="colorstars" onclick="rotateSpace()" name="colorstars"  />
+                <label for="colorstars">Color Stars</label>
             </div>
-            <p><center><u><i>Display Objects</i></u></center></p>
+            <br>
+            <div>
+                <input type="checkbox" id="limitstars" onclick="rotateSpace()"  name="limitstars"  />
+                <label for="limitstars">Limit visible stars by range</label>
+            </div>
+            <br>
 
-            <button id="showStars">Show Stars</button><br><textarea id="starcount" style="text-align: center"></textarea><br>
-            <br>
-            <button id="showMessier">Show Messier</button><br><textarea id="messiercount" style="text-align: center"></textarea><br>
-            <br>
-            <button id="showDSO">Show DSO</button><br><textarea id="dsocount" style="text-align: center"></textarea><br>
-            <br>
-            <br>
+            <div id="vr">
+                <label for="visiblerange">Visible stellar range:</label>  
+                <input type="text" id="visiblerange"   
+                style="border:0; color:red; font-weight:bold;">  
+                <br>
+                <div id="distance-slider"></div> 
+                <br>
+            </div>
             <button id="reset">Reset</button><br>
-
         </div>
-        <div id="filters">
-            <fieldset>
-                <legend>Stellar Classification:</legend>
-            
-                <div>
-                    <input type="checkbox" id="O" name="O_class" checked />
-                    <label for="O">O class <code> (<1%)</code></label>
-                </div>
-                <div>
-                    <input type="checkbox" id="B" name="B_class" checked />
-                    <label for="B">B class <code> (1-2%)</code></label>
-                </div>
-                <div>
-                    <input type="checkbox" id="A" name="A_class" checked />
-                    <label for="A">A class <code> (3-5%)</code></label>
-                </div>
-                <div>
-                    <input type="checkbox" id="F" name="F_class" checked />
-                    <label for="F">F class <code> (3-5%)</code></label>
-                </div>             
-                <div>
-                    <input type="checkbox" id="G" name="G_class" checked />
-                    <label for="G">G class (Sun) <code> (7-10%)</code></label>
-                </div>
-                <div>
-                    <input type="checkbox" id="K" name="K_class" checked />
-                    <label for="K">K class <code> (10-15%)</code></label>
-                </div>
-                <div>
-                    <input type="checkbox" id="M" name="M_class" checked />
-                    <label for="M">M class <code> (70-75%)</code></label>
-                </div>    
-              </fieldset>
-              <br>
-              <fieldset>
-                <legend>Deep Sky Objects (DSO):</legend>
-            
-                <div>
-                    <input type="checkbox" id="gal" name="gal" checked />
-                    <label for="gal">Galaxies</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="neb" name="neb" checked />
-                    <label for="neb">Nebulas</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="pn" name="pn" checked />
-                    <label for="pn">Planetary Nebulas</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="oc" name="oc" checked />
-                    <label for="oc">Open Clusters</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="gc" name="gc" checked />
-                    <label for="gc">Globular Clusters</label>
-                </div>
-                <div>
-                    <input type="checkbox" id="other_dso" name="other_dso" checked />
-                    <label for="other_dso">Other DSO</label>
-                </div>
-            </fieldset>
+ 
+        <div id="myviewport">
+            <canvas id="myCanvas" width="875" height="875" style="border:1px solid #000000;">
+            </canvas>
+        </div>
 
-
+        <div id="rightpanel">
+            <div id="filters">
+                <fieldset>
+                    <legend>Stellar Classification:</legend>
+                
+                    <div>
+                        <input type="checkbox" id="O" name="O_class" checked />
+                        <label for="O">O class <code> (<1%)</code></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="B" name="B_class" checked />
+                        <label for="B">B class <code> (1-2%)</code></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="A" name="A_class" checked />
+                        <label for="A">A class <code> (3-5%)</code></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="F" name="F_class" checked />
+                        <label for="F">F class <code> (3-5%)</code></label>
+                    </div>             
+                    <div>
+                        <input type="checkbox" id="G" name="G_class" checked />
+                        <label for="G">G class (Sun) <code> (7-10%)</code></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="K" name="K_class" checked />
+                        <label for="K">K class <code> (10-15%)</code></label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="M" name="M_class" checked />
+                        <label for="M">M class <code> (70-75%)</code></label>
+                    </div>    
+                </fieldset>
+                <br>
+                <fieldset>
+                    <legend>Deep Sky Objects (DSO):</legend>
+                
+                    <div>
+                        <input type="checkbox" id="gal" name="gal" checked />
+                        <label for="gal">Galaxies</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="neb" name="neb" checked />
+                        <label for="neb">Nebulas</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="pn" name="pn" checked />
+                        <label for="pn">Planetary Nebulas</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="oc" name="oc" checked />
+                        <label for="oc">Open Clusters</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="gc" name="gc" checked />
+                        <label for="gc">Globular Clusters</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="other_dso" name="other_dso" checked />
+                        <label for="other_dso">Other DSO</label>
+                    </div>
+                </fieldset>
+                <div id="showme">
+                    <p><center><u><i>Display Objects</i></u></center></p>
+                    <button id="showStars">Hide Stars</button><br><textarea id="starcount" style="text-align: center"></textarea><br>
+                    <br>
+                    <button id="showMessier">Show Messier</button><br><textarea id="messiercount" style="text-align: center"></textarea><br>
+                    <br>
+                    <button id="showDSO">Show DSO</button><br><textarea id="dsocount" style="text-align: center"></textarea><br>
+                    <br>
+                    <br>
+                </div>
+    
+            </div>
         </div>
     </div>
     <script type="text/javascript" src="js/stars.js"></script>

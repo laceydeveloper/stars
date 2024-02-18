@@ -1,5 +1,4 @@
 
-//var dsos = []; //Papa.parse(window.dsoData, {header: true, download: false}).data;
 var dsos = Papa.parse(window.dsoData, {header: true, download: false}).data;
 var objs = Papa.parse(window.csvData, {header: true, download: false}).data;
 var numobjs = objs.length;
@@ -23,9 +22,7 @@ var maxstarmag = 3.7;
 var radian = 180.0 / Math.PI;
 var lat = toDecimalDec(39,51,8.7);  // latitude
 lat = -(90.0 - lat);
-//lat = 90.0 - lat;
-//lat = 0.0;
-//lat = 50.0;
+
 var sindec = Math.sin(toRadians(lat));
 var cosdec = Math.cos(toRadians(lat));
 var speed = 1;
@@ -43,16 +40,15 @@ function toDecimalDec(d,m,s) {
 	return d + (m/60.0) + (s/3600.0);
 }
 
+function parsecToLightyears(dist) {
+    const parsec = 3.26; // lightyears in a parsec
+    return (dist*parsec).toFixed(2);
+}
+
 function xy_to_ra_dec(x, y, z) {
     ra_dec = [];
     theta = 0; // dec
     phi = 0; // ra
-
- /*
-    var x = horizonradius*Math.sin(phi)*Math.cos(theta);
-    var y = horizonradius*Math.sin(phi)*Math.sin(theta);
-    var z = horizonradius*Math.cos(phi);
-*/
 
     theta = Math.atan(y/x);
     phi = 90 - Math.acos(z/Math.sqrt(horizonradius));
@@ -61,15 +57,6 @@ function xy_to_ra_dec(x, y, z) {
     ra_dec[1] = phi;
 
     return ra_dec;
-
-//	x1 = x*cosdec - z * sindec;
-//	z1 = x*sindec + z * cosdec;
-/*
-    rho=𝑥2+𝑦2+𝑧2
-    tan(theta)=𝑦/𝑥
-    phi= arccos(z/(x2+y2+z2)1/2)
-*/
-
 }
 
 function increase_star_mag() {
@@ -82,18 +69,21 @@ function decrease_star_mag() {
     rotateSpace();
 }
 
+var dirchange = 1;
 function lookleft() {
-    dir += 5;
+    dir += dirchange;
     if (dir >= 360) {
         dir = 0;
     }
+    rotateSpace();
 }
 
 function lookright() {
-    dir -= 5;
+    dir -= dirchange;
     if (dir < 0) {
         dir = 355;
     }
+    rotateSpace();
 }
 
 function findstarsize(mag) {
@@ -176,7 +166,7 @@ $('#M').change(function() {
     rotateSpace();    
 });
 
-// refrash screen on DSO toggle
+// refresh screen on DSO toggle
 $('#gal').change(function() {
     rotateSpace();    
 });
@@ -237,7 +227,7 @@ function printDSOType(dsotype) {
         case "OC":
             thistype = "Open Cluster";
             break;
-       case "OC+Neb":
+        case "OC+Neb":
             thistype = "Open Cluster + Nebula";
             break;
         case "GC":
@@ -254,20 +244,14 @@ function printDSOType(dsotype) {
     return thistype;
 }
 
-const parsec = 3.26; // lightyears in a parsec
 function printstar(i) {
     thisstar = objs[x2stars[i].index];
     alerttext = thisstar.bf + "\n";
     if (thisstar.proper != "") alerttext += "Proper Name: " + thisstar.proper + "\n";
     alerttext += "Apparent Mag: " + thisstar.mag+ "\n";
-    alerttext += "Distance: " + (thisstar.dist*parsec).toFixed(2) + " ly\n";
+    alerttext += "Distance: " + parsecToLightyears(thisstar.dist) + " ly\n";
     alerttext += "Classification: " + (thisstar.spect).substring(0, 2) + "\n";
-
- //   if (objs[x2stars[i].index].x > 0) {
     $('#mouseloc').val(alerttext);
- //       alert(alerttext);
- //   }
- //   alert(objs[x2stars[i].index].proper);
 }
 
 function printdso(i) {
@@ -275,11 +259,7 @@ function printdso(i) {
     alerttext = thisdso.cat1 + " " + thisdso.id1 + "\n";
     if (thisdso.name != "") alerttext += thisdso.name + "\n";
     alerttext += "DSO Type: " + printDSOType(thisdso.type) + "\n";
- //   alert(dsos[x2dso[i].index].name);
- //   if (dsos[x2dso[i].index].x > 0) {
-        $('#mouseloc').val(alerttext);
-//    alert(alerttext);
- //   }
+    $('#mouseloc').val(alerttext);
 }
 
 function updateMouseLocField(x,y) {
@@ -408,27 +388,63 @@ function checkStarClassDisplayable(thisclass) {
 function checkDSOTypeDisplayable(thisdso_type) {
     var displayable = false;
     if (dsotype_set.has(thisdso_type)) {
- //   if (classes.includes(thisclass) && (thisdso_type != "")) {
- //       console.log(thisclass+ " class star");
-        console.log(thisdso_type + " DSO Type");
+//        console.log(thisdso_type + " DSO Type");
         thisdso_type_id = dsoTypeToCheckboxID(thisdso_type);
- //       if (thisdso_type_id != "not_found") {
-            ischecked = document.getElementById(thisdso_type_id).checked;
-            if (ischecked) {
-                displayable = true;
-            }
- //       }
+        ischecked = document.getElementById(thisdso_type_id).checked;
+        if (ischecked) {
+            displayable = true;
+        }
     }   
     return displayable;
 }
 
-function checkDistanceDisplayable(thisdistance) {
-//  id="distance-slider"
-
+function checkStarDistanceDisplayable(thisdistance) {
     var displayable = false;
+    lydistance = parsecToLightyears(thisdistance);
+    ischecked = document.getElementById("limitstars").checked;
+    if (ischecked) {
+        min = $( "#distance-slider" ).slider( "values", 0 );
+        max = $( "#distance-slider" ).slider( "values", 1 );
+        if ((lydistance >= min) && (lydistance <= max)){
+            displayable = true;
+        }
+    }
+    else {
+        displayable = true;
+    }
 
-    
     return displayable;
+}
+
+function getStarColor(spect) {
+    color = "white";
+    if (document.getElementById("colorstars").checked) {
+        switch (spect) {
+            case "O":
+                color = "cyan";
+                break;
+            case "B" :
+                color = "lightcyan";
+                break;
+            case "A":
+                color = "white";
+                break;
+            case "F":
+                color = "lightyellow";
+                break;
+            case "G":
+                color = "yellow";
+                break;
+            case "K":
+                color = "orange";
+                break;
+            case "M":
+                color = "orangered";
+                break;
+            default:
+        }
+    }
+    return color;
 }
 
 function calcCoordinates(ra, dec, distance) {
@@ -444,8 +460,6 @@ function calcCoordinates(ra, dec, distance) {
     y1 = y;
     z1 = x*sindec + z * cosdec;
  
-//   var cosdir = Math.round(Math.cos(toRadians(dir)));
-//    var sindir = Math.round(Math.sin(toRadians(dir)));
     var cosdir = Math.cos(toRadians(dir));
     var sindir = Math.sin(toRadians(dir));
     // zaxis-rotation
@@ -487,13 +501,11 @@ function rotateSpace() {
     }
 
 // draw dec lines
-//for (var j=lat; j < 90; j = j + 10) {
-    for (var j = 90; j > -90; j = j - 10) {
+//    for (var j = 90; j > -90; j = j - 10) {
 //        console.log(j + " Declination line");
-        for (var i = 0; i < 360; i = i + 1) {
- //           plotObject(i, j, 'yellow', gridradius, horizonradius);
-        }
-    }
+//        for (var i = 0; i < 360; i = i + 1) {
+//        }
+//    }
 
 // draw zenith
     context.beginPath();
@@ -513,22 +525,21 @@ function rotateSpace() {
 
     if (displayStars) {
         for (i = 0; i < numobjs; i++) {
-            if (checkStarClassDisplayable(objs[i].spect.substring(0, 1))) { 
-                var mag = objs[i].mag;
-                binmag(mag);
-                if (mag <= maxstarmag) {
-                    thiscolor = 'white';
-                    if (objs[i].proper == "Aldebaran") thiscolor = "pink";
-                    starradius = findstarsize(mag);
- //                 if (plotObject(15*objs[i].ra, objs[i].dec, 'white', starradius, objs[i].dist)) {
-                    if (plotObject(15*objs[i].ra, objs[i].dec, thiscolor, starradius, objs[i].dist)) {  // 15* is due to 15 * 24 = 360 degrees
-                        x2stars[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x};
-                        j++; 
-                        num_plotted++;
-                    };
-                
+            if (checkStarDistanceDisplayable(objs[i].dist)) {
+                if (checkStarClassDisplayable(objs[i].spect.substring(0, 1))) { 
+                    var mag = objs[i].mag;
+                    binmag(mag);
+                    if (mag <= maxstarmag) {
+                        thiscolor = getStarColor(objs[i].spect.substring(0, 1));
+                        starradius = findstarsize(mag);
+                        if (plotObject(15*objs[i].ra, objs[i].dec, thiscolor, starradius, objs[i].dist)) {  // 15* is due to 15 * 24 = 360 degrees
+                            x2stars[j] = { index: i, x: coords.y+centerX, y: coords.z+centerY, z: coords.x};
+                            j++; 
+                            num_plotted++;
+                        };
+                    
+                    }
                 }
-    
             }
         }
     }
@@ -619,27 +630,51 @@ document.getElementById("starmag").disabled = true;
 
 function resetConfig() {
     displayDSO = false;
+    document.getElementById("showDSO").innerHTML = "Show DSO";       
+ 
     displayMessier = false;
+    document.getElementById("showMessier").innerHTML = "Show Messier";       
+
     displayStars = true;
+    document.getElementById("showStars").innerHTML = "Hide Stars";
+
     maxstarmag = 3.7;
     ra_change = 0;
     dir = init_dir;
     rotation_speed = init_speed;
-    rotateSpace();
+    runforward();
 }
 
 function showMessier() {
     displayMessier = !displayMessier; 
+    if (displayMessier) {
+        document.getElementById("showMessier").innerHTML = "Hide Messier";
+    }
+    else {
+        document.getElementById("showMessier").innerHTML = "Show Messier";       
+    }
     rotateSpace();      
 }
 
 function showDSO() {
     displayDSO = !displayDSO; 
+    if (displayDSO) {
+        document.getElementById("showDSO").innerHTML = "Hide DSO";
+    }
+    else {
+        document.getElementById("showDSO").innerHTML = "Show DSO";       
+    }
     rotateSpace();      
 }
 
 function showStars() {
     displayStars = !displayStars;  
+    if (displayStars) {
+        document.getElementById("showStars").innerHTML = "Hide Stars";
+    }
+    else {
+        document.getElementById("showStars").innerHTML = "Show Stars";       
+    }
     rotateSpace();
 }
 
@@ -647,8 +682,6 @@ function runbackward() {
     clearInterval(thisinterval);
        if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -665,8 +698,6 @@ function stepbackward() {
     clearInterval(thisinterval);
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -682,8 +713,6 @@ function stepforward() {
     clearInterval(thisinterval);
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -699,8 +728,6 @@ function runforward() {
     clearInterval(thisinterval);
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -715,8 +742,6 @@ function runforward() {
 function update_forwardsphere() {
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -730,8 +755,6 @@ function update_forwardsphere() {
 function update_backwardsphere() {
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change -= speed;
    context.clearRect(0,0,canvas.width, canvas.height);
@@ -746,8 +769,6 @@ function update_backwardsphere() {
 function update_sphere() {
     if (ra_change >= 360) {
         ra_change = 0;
-//        clearInterval(thisinterval);
-//        return;
     }
     ra_change += speed;
    context.clearRect(0,0,canvas.width, canvas.height);
