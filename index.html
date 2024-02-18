@@ -62,6 +62,8 @@
                   values: [ 0, 500 ],  
                   slide: function( event, ui ) {  
                      $( "#visiblerange" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] + " ly");  
+                     dist_min = ui.values[ 0 ];
+                     dist_max = ui.values[ 1 ];
                      rotateSpace();
                   }  
               });  

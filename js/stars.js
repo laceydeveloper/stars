@@ -7,6 +7,7 @@ var numdsos = dsos.length;
 var thisinterval = null;
 const init_dir = 0;
 var dir = init_dir;
+
 const init_speed = 100;
 var rotation_speed = init_speed;
 
@@ -25,6 +26,10 @@ lat = -(90.0 - lat);
 
 var sindec = Math.sin(toRadians(lat));
 var cosdec = Math.cos(toRadians(lat));
+
+var cosdir = Math.cos(toRadians(dir));
+var sindir = Math.sin(toRadians(dir));
+
 var speed = 1;
 
 function toRadians(deg) {
@@ -70,11 +75,14 @@ function decrease_star_mag() {
 }
 
 var dirchange = 1;
+
 function lookleft() {
     dir += dirchange;
     if (dir >= 360) {
         dir = 0;
     }
+    cosdir = Math.cos(toRadians(dir));
+    sindir = Math.sin(toRadians(dir));
     rotateSpace();
 }
 
@@ -83,6 +91,8 @@ function lookright() {
     if (dir < 0) {
         dir = 355;
     }
+    cosdir = Math.cos(toRadians(dir));
+    sindir = Math.sin(toRadians(dir));
     rotateSpace();
 }
 
@@ -398,13 +408,16 @@ function checkDSOTypeDisplayable(thisdso_type) {
     return displayable;
 }
 
+var dist_min = 0;
+var dist_max = 500;
+
 function checkStarDistanceDisplayable(thisdistance) {
     var displayable = false;
     lydistance = parsecToLightyears(thisdistance);
     ischecked = document.getElementById("limitstars").checked;
     if (ischecked) {
-        min = $( "#distance-slider" ).slider( "values", 0 );
-        max = $( "#distance-slider" ).slider( "values", 1 );
+        min = dist_min;
+        max = dist_max;
         if ((lydistance >= min) && (lydistance <= max)){
             displayable = true;
         }
@@ -460,8 +473,8 @@ function calcCoordinates(ra, dec, distance) {
     y1 = y;
     z1 = x*sindec + z * cosdec;
  
-    var cosdir = Math.cos(toRadians(dir));
-    var sindir = Math.sin(toRadians(dir));
+//    var cosdir = Math.cos(toRadians(dir));
+//    var sindir = Math.sin(toRadians(dir));
     // zaxis-rotation
     x_final = x1*cosdir + y1 * sindir;
     y_final = -x1*sindir + y1 * cosdir;
