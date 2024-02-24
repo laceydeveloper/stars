@@ -501,6 +501,8 @@ function getStarColor(spect) {
 
   // Example usage
 var utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
+//utcTime = new Date(2035,10,24,12,0).getTime() / 1000; // Current UTC time in seconds
+
 var observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
   
 var meridianRA = calculateMeridianRA(utcTime, observerLongitude);
@@ -558,6 +560,7 @@ function plotObject(ra, dec, spectrum, size, distance) {
 }
 
 var currenttime = new Date();
+//currenttime = new Date(2035,10,24,12,0);
 var datetime = currenttime.toDateString() + " " + currenttime.toTimeString();
 
 function rotateSpace() {
@@ -779,6 +782,10 @@ function runbackward() {
 
 }
 
+function changeSpeed() {
+    
+}
+
 function stepbackward() {
     clearInterval(thisinterval);
     if (ra_change >= 360) {
@@ -874,8 +881,8 @@ function stop_rotation() {
     var nowstate = document.getElementById("now").innerHTML;
     if (nowstate == "Now") {
         currenttime = new Date();
-
         utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
+//        utcTime = new Date(2035,10,24,12,0).getTime() / 1000; // Current UTC time in seconds
         observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
           
         meridianRA = calculateMeridianRA(utcTime, observerLongitude);
