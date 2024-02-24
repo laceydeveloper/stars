@@ -30,11 +30,26 @@
             padding-left: 25%;
         }
 
+        #modtime {
+            width: 210px;
+        }
+
+        #modtime img {
+            width: 25px;
+            height: 25px;
+        }
+
+        #tbtns {
+            width: 210px;
+            display: flex;
+            justify-content: space-between;
+        }
+
         #currenttime, #vd, #sm, #showme, #modtime, #curdirection, #starmag, #mouseloc, #starcount, #messiercount, #dsocount {
             width: 200px;
         }
 
-         #mouseloc {
+        #mouseloc {
             height: 75px;
         }
 
@@ -81,14 +96,17 @@
             <div id="modtime">
                 <p><center><u><i>Time</i></u></center></p>
                 <textarea id="currenttime" style="text-align: center"></textarea><br>
-                <button id="runbackward">Run Backwards</button><br>
-                <button id="stepbackward">Step Backward</button><br>
-                <button id="now">Now</button><br>
-                <button id="stepforward">Step Forward</button><br>
-                <button id="runforward">Run Forwards</button><br>
+                <div id="tbtns">
+                    <img class="timebtn" id="runbackward" src="img/left_run.png"/><br>
+                    <img class="timebtn" id="stepbackward" src="img/left_step.png"/><br>
+                    <button class="timebtn" id="now">Now</button><br>
+                    <img class="timebtn" id="stepforward" src="img/right_step.png"/><br>
+                    <img class="timebtn" id="runforward" src="img/right_run.png"/><br>
+                </div>
                 <br>
             </div>
-            <div id="vd">
+            <br>
+             <div id="vd">
                 <p><center><u><i>Viewing Direction (degrees)</i></u></center></p>
                 <textarea id="curdirection" style="text-align: center"></textarea><br>
                 <button id="lookleft" style="float: left;">Look Left</button>
