@@ -27,9 +27,10 @@
 
         #visiblerange {
             padding-bottom: 10px;
+            padding-left: 25%;
         }
 
-        #vd, #sm, #showme, #modtime, #curdirection, #starmag, #mouseloc, #starcount, #messiercount, #dsocount {
+        #currenttime, #vd, #sm, #showme, #modtime, #curdirection, #starmag, #mouseloc, #starcount, #messiercount, #dsocount {
             width: 200px;
         }
 
@@ -44,6 +45,7 @@
 
         #rightpanel {
             float: left;
+            padding-left: 5px;
             width: 210px;
         }
 
@@ -78,8 +80,10 @@
             <textarea id="mouseloc" rows="5"></textarea><br>
             <div id="modtime">
                 <p><center><u><i>Time</i></u></center></p>
+                <textarea id="currenttime" style="text-align: center"></textarea><br>
                 <button id="runbackward">Run Backwards</button><br>
                 <button id="stepbackward">Step Backward</button><br>
+                <button id="now">Now</button><br>
                 <button id="stepforward">Step Forward</button><br>
                 <button id="runforward">Run Forwards</button><br>
                 <br>
@@ -92,32 +96,6 @@
             </div>
             <br>
 
-            <div id="sm">
-                <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
-                <textarea id="starmag" style="text-align: center"></textarea><br>
-                <button id="decreasestarmag" style="float: left;">-</button>
-                <button id="increasestarmag" style="float: right;">+</button><br>
-            </div>
-            <br>
-            <div>
-                <input type="checkbox" id="colorstars" onclick="rotateSpace()" name="colorstars"  />
-                <label for="colorstars">Color Stars</label>
-            </div>
-            <br>
-            <div>
-                <input type="checkbox" id="limitstars" onclick="rotateSpace()"  name="limitstars"  />
-                <label for="limitstars">Limit visible stars by range</label>
-            </div>
-            <br>
-
-            <div id="vr">
-                <label for="visiblerange">Visible stellar range:</label>  
-                <input type="text" id="visiblerange"   
-                style="border:0; color:red; font-weight:bold;">  
-                <br>
-                <div id="distance-slider"></div> 
-                <br>
-            </div>
             <button id="reset">Reset</button><br>
         </div>
  
@@ -160,7 +138,27 @@
                         <label for="M">M class <code> (70-75%)</code></label>
                     </div>    
                 </fieldset>
+                <div id="sm">
+                    <p><center><u><i>Star Magnitude<br>Threshold</i></u></center></p>
+                    <textarea id="starmag" style="text-align: center"></textarea><br>
+                    <button id="decreasestarmag" style="float: left;">-</button>
+                    <button id="increasestarmag" style="float: right;">+</button><br>
+                </div>
                 <br>
+                <div>
+                    <input type="checkbox" id="colorstars" onclick="rotateSpace()" name="colorstars"  />
+                    <label for="colorstars">Color Stars</label>
+                </div>
+                <br>   
+                <div id="vr">
+                    <input type="checkbox" id="limitstars" onclick="rotateSpace()"  name="limitstars"  />
+                    <label for="limitstars">Visible stellar range:</label>  
+                    <input type="text" id="visiblerange"   
+                    style="border:0; color:red; font-weight:bold;">  
+                    <br>
+                    <div id="distance-slider"></div> 
+                    <br>
+                </div>
                 <fieldset>
                     <legend>Deep Sky Objects (DSO):</legend>
                 

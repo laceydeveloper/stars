@@ -6,6 +6,33 @@ var numdsos = dsos.length;
 
 var thisinterval = null;
 const init_dir = 0;
+
+// Function to convert degrees to radians
+function degToRad(degrees) {
+    return degrees * (Math.PI / 180);
+  }
+  
+  // Function to convert radians to degrees
+  function radToDeg(radians) {
+    return radians * (180 / Math.PI);
+  }
+  
+  // Function to calculate the current RA of the celestial meridian
+  function calculateMeridianRA(utc, longitude) {
+    // Calculate the Sidereal Time
+    const jd = (utc / 86400) + 2440587.5; // Julian Date
+    const t_eph = (jd - 2451545.0) / 36525; // Julian centuries since J2000.0
+    const theta = 280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t_eph * t_eph - t_eph * t_eph * t_eph / 38710000; // Greenwich Mean Sidereal Time in degrees
+    const gmst = theta % 360; // Convert GMST to within [0, 360] degrees
+  
+    // Calculate the Local Sidereal Time
+    const lst = gmst + longitude; // Local Sidereal Time
+  
+    // The RA of the celestial meridian is equal to the Local Sidereal Time
+    return lst % 360; // Convert RA to within [0, 360] degrees
+  }
+
+//var dir = 360-meridianRA;
 var dir = init_dir;
 
 const init_speed = 100;
@@ -13,6 +40,17 @@ var rotation_speed = init_speed;
 
 var histobins = Array(120).fill(0);
 var binned = false;
+
+var precession_adjustment = 50;  //arc second per year
+var initial_meridan = 12;
+var initial_month = 1;
+var initial_day = 22;
+var initial_year = 2024;
+var initial_hour = 11;
+var initial_min = 59;
+var initial_sec = 48;
+var current_julian = new Date().getTime()/86400000 + 2440587.5 ;  // 2460364.000694
+var meridan_julian = 2460364.209028;
 
 var displayDSO = false;
 var displayMessier = false;
@@ -49,6 +87,7 @@ function parsecToLightyears(dist) {
     const parsec = 3.26; // lightyears in a parsec
     return (dist*parsec).toFixed(2);
 }
+
 
 function xy_to_ra_dec(x, y, z) {
     ra_dec = [];
@@ -460,6 +499,18 @@ function getStarColor(spect) {
     return color;
 }
 
+  // Example usage
+const utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
+const observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
+  
+const meridianRA = calculateMeridianRA(utcTime, observerLongitude);
+console.log("Current RA of the celestial meridian:", meridianRA.toFixed(2), "degrees");
+
+
+var cosmer = Math.cos(toRadians(180+meridianRA));
+var sinmer = Math.sin(toRadians(180+meridianRA));
+
+
 function calcCoordinates(ra, dec, distance) {
     var theta = toRadians(ra);
     var phi = toRadians(90-dec);
@@ -468,17 +519,22 @@ function calcCoordinates(ra, dec, distance) {
     var y = horizonradius*Math.sin(phi)*Math.sin(theta);
     var z = horizonradius*Math.cos(phi);
 
+    // zaxis-rotation for meridan
+    x1 = x*cosmer + y * sinmer;
+    y1 = -x*sinmer + y * cosmer;
+    z1 = z;
+
     // yaxis-rotation
-    x1 = x*cosdec - z * sindec;
-    y1 = y;
-    z1 = x*sindec + z * cosdec;
+    x2 = x1*cosdec - z1 * sindec;
+    y2 = y1;
+    z2 = x1*sindec + z1 * cosdec;
  
 //    var cosdir = Math.cos(toRadians(dir));
 //    var sindir = Math.sin(toRadians(dir));
-    // zaxis-rotation
-    x_final = x1*cosdir + y1 * sindir;
-    y_final = -x1*sindir + y1 * cosdir;
-    z_final = z1;
+    // zaxis-rotation for view dir
+    x_final = x2*cosdir + y2 * sindir;
+    y_final = -x2*sindir + y2 * cosdir;
+    z_final = z2;
 
     return {'x': x_final, 'y': y_final, 'z': z_final};
 }
@@ -502,6 +558,12 @@ function plotObject(ra, dec, spectrum, size, distance) {
 }
 
 function rotateSpace() {
+    var currenttime = new Date();
+    var datetime = currenttime.toDateString() + " " + currenttime.toTimeString();
+    paren = datetime.indexOf("G");
+
+    document.getElementById("currenttime").innerHTML = datetime.substring(0,paren-1);
+
     context.fillStyle = "black";
 
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -538,6 +600,9 @@ function rotateSpace() {
 
     if (displayStars) {
         for (i = 0; i < numobjs; i++) {
+            var pmra = objs[i].pmra;  // proper motion right ascension
+            var pmdec = objs[i].pmdec; // proper motion declination
+    
             if (checkStarDistanceDisplayable(objs[i].dist)) {
                 if (checkStarClassDisplayable(objs[i].spect.substring(0, 1))) { 
                     var mag = objs[i].mag;
@@ -565,6 +630,7 @@ function rotateSpace() {
 
     if ((displayDSO) || (displayMessier)) {
         j = 0;
+
         for (i = 0; i < dsos.length; i++) {
             var mag = dsos[i].mag;
             var cat = dsos[i].cat1;
@@ -792,5 +858,5 @@ function update_sphere() {
     }
  
 }
-
-runforward();
+rotateSpace();
+//runforward();
