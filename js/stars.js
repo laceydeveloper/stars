@@ -500,10 +500,10 @@ function getStarColor(spect) {
 }
 
   // Example usage
-const utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
-const observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
+var utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
+var observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
   
-const meridianRA = calculateMeridianRA(utcTime, observerLongitude);
+var meridianRA = calculateMeridianRA(utcTime, observerLongitude);
 console.log("Current RA of the celestial meridian:", meridianRA.toFixed(2), "degrees");
 
 
@@ -557,8 +557,10 @@ function plotObject(ra, dec, spectrum, size, distance) {
         return inview;
 }
 
+var currenttime = new Date();
+var datetime = currenttime.toDateString() + " " + currenttime.toTimeString();
+
 function rotateSpace() {
-    var currenttime = new Date();
     var datetime = currenttime.toDateString() + " " + currenttime.toTimeString();
     paren = datetime.indexOf("G");
 
@@ -690,6 +692,8 @@ document.getElementById('runbackward').addEventListener("mousedown", runbackward
 document.getElementById('stepbackward').addEventListener("mousedown", stepbackward, false);
 document.getElementById('stepforward').addEventListener("mousedown", stepforward, false);
 document.getElementById('runforward').addEventListener("mousedown", runforward, false);
+
+document.getElementById('now').addEventListener("mousedown", stop_rotation, false);
 document.getElementById('lookleft').addEventListener("mousedown", lookleft, false);
 document.getElementById('lookright').addEventListener("mousedown", lookright, false);
 document.getElementById('increasestarmag').addEventListener("mousedown", increase_star_mag, false);
@@ -769,6 +773,8 @@ function runbackward() {
         printhisto();
         binned = true;
     }
+    document.getElementById("now").innerHTML = "Stop";
+
     thisinterval = setInterval(update_backwardsphere, rotation_speed);
 
 }
@@ -785,7 +791,7 @@ function stepbackward() {
         printhisto();
         binned = true;
     }
- 
+    document.getElementById("now").innerHTML = "Now";
 }
 
 function stepforward() {
@@ -800,6 +806,8 @@ function stepforward() {
         printhisto();
         binned = true;
     }
+    document.getElementById("now").innerHTML = "Now";
+
  
 }
 
@@ -815,6 +823,8 @@ function runforward() {
         printhisto();
         binned = true;
     }
+    document.getElementById("now").innerHTML = "Stop";
+
     thisinterval = setInterval(update_forwardsphere, rotation_speed);
 }
 
@@ -856,7 +866,31 @@ function update_sphere() {
         printhisto();
         binned = true;
     }
- 
 }
+
+function stop_rotation() {
+    clearInterval(thisinterval);
+    
+    var nowstate = document.getElementById("now").innerHTML;
+    if (nowstate == "Now") {
+        currenttime = new Date();
+
+        utcTime = new Date().getTime() / 1000; // Current UTC time in seconds
+        observerLongitude = -74.192; // Longitude of the observer's location (Boston, MA for example)
+          
+        meridianRA = calculateMeridianRA(utcTime, observerLongitude);
+        console.log("Current RA of the celestial meridian:", meridianRA.toFixed(2), "degrees");
+        
+        
+        cosmer = Math.cos(toRadians(180+meridianRA));
+        sinmer = Math.sin(toRadians(180+meridianRA)); 
+        ra_change = 0;
+    }
+    else {
+        document.getElementById("now").innerHTML = "Now";
+    }
+    rotateSpace();
+}
+
 rotateSpace();
 //runforward();

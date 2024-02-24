@@ -70,6 +70,12 @@
        }
     </style>
           <script>  
+            function change_time_interval() {
+                var mylist = document.getElementById("mytime");
+                document.getElementById("selected_time").value = mylist.options[mylist.selectedIndex].text;
+            }
+
+
             $(function() {  
                $( "#distance-slider" ).slider({  
                   range:true,  
@@ -104,6 +110,20 @@
                     <img class="timebtn" id="runforward" src="img/right_run.png"/><br>
                 </div>
                 <br>
+                <form>
+                    <b> Time interval:</b>
+                    <select id = "mytime" onchange = "change_time_interval()" >
+                    <option> ---Choose Interval--- </option>
+                    <option> Seconds </option>
+                    <option> Minutes </option>
+                    <option> Hours </option>
+                    <option> Days </option>
+                    <option> Months </option>
+                    <option> Years </option>
+                    </select>
+                    <p> Your selected time is: 
+                    <input type = "text" id = "selected_time" size = "20" </p>
+                </form>
             </div>
             <br>
              <div id="vd">
